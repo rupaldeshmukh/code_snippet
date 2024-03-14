@@ -1,3 +1,81 @@
+import React, { useState, useEffect } from "react";
+
+const items = [
+  {
+    desc: "01. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    title: "test 1",
+  },
+  {
+    desc: "02. Sed do eiusmod tempor incididunt ut labore.",
+    title: "test 2",
+  },
+  {
+    desc: "03. Consectetur adipiscing elit.",
+    title: "test 3",
+  },
+  {
+    desc: "04. Ut enim ad minim veniam, quis nostrud exercitation.",
+    title: "test 4",
+  },
+  {
+    desc: "05. Llamco nisi ut aliquip ex ea commodo consequat.",
+    title: "test 5",
+  },
+  {
+    desc: "06. Misi ut aliquip ex ea commodo consequat.",
+    title: "test 6",
+  },
+  {
+    desc: "07. Misi ut aliquip ex ea commodo consequat.",
+    title: "test 7",
+  },
+  {
+    title: "test 8",
+    desc: "08. Misi ut aliquip ex ea commodo consequat.",
+  },
+  {
+    title: "test 9",
+    desc: "09. Misi ut aliquip ex ea commodo consequat.",
+  },
+];
+
+const App = () => {
+  const [carouselItems, setCarouselItems] = useState(items);
+  const [currentIndex, setCurrentIndex] = useState(1); // Initially show card 1
+
+  useEffect(() => {
+    document.documentElement.style.setProperty("--num", items.length);
+  }, [items]);
+
+  const handleMove = (direction) => {
+    const newIndex = (currentIndex + (direction === "next" ? 1 : -1) + items.length) % items.length;
+    setCarouselItems([...items.slice(newIndex), ...items.slice(0, newIndex)]);
+    setCurrentIndex(newIndex);
+  };
+
+  return (
+    <>
+      <button onClick={() => handleMove("next")} className="prev">
+        {/* Add content for your "prev" button */}
+      </button>
+      <button onClick={() => handleMove("prev")} className="next">
+        {/* Add content for your "next" button */}
+      </button>
+      <div className="carousel">
+        {carouselItems.slice(0, 7).map((t, index) => (
+          <div className="card" key={index}>
+            <p>{t.title}</p>
+            <p>{t.desc}</p>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+};
+
+export default App;
+
+
 ___________________________________________________________________________________________________________________________________________________________ Rev 2
 
 import React, { useState, useEffect } from "react";
