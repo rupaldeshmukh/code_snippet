@@ -1,0 +1,72 @@
+import React, { useState } from 'react';
+import "./App.css"
+
+const Tooltip = ({ children, tooltipText }) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  const handleMouseOver = () => setShowTooltip(true);
+  const handleMouseLeave = () => setShowTooltip(false);
+
+  return (
+    <div className="tooltip" onMouseOver={handleMouseOver} onMouseLeave={handleMouseLeave}>
+      {children}
+      {showTooltip && <span className="tooltiptext">{tooltipText}</span>}
+    </div>
+  );
+};
+
+const App = () => {
+  return (
+    <div>
+      <h2>Tooltip</h2>
+      <p>Move the mouse over the buttons below:</p>
+      <Tooltip children={<button>Button 1</button>} tooltipText="Tooltip text for Button 1" />
+      <Tooltip children={<button>Button 2</button>} tooltipText="Tooltip text for Button 2" />
+    </div>
+  );
+};
+
+export default App;
+
+////////////////CSS
+
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+  margin-right: 10px; /* Add spacing between buttons */
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%); /* Replaces margin-left for better positioning */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%); /* Replaces margin-left for better positioning */
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
