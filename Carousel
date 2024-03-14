@@ -1,0 +1,145 @@
+import React, { useState, useEffect } from "react";
+import "./App.css";
+
+const items = [
+  {
+    desc: "01. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    title: "test 1",
+  },
+  {
+    desc: "02. Sed do eiusmod tempor incididunt ut labore.",
+    title: "test 1",
+  },
+  {
+    desc: "03. Consectetur adipiscing elit.",
+    title: "test 1",
+  },
+  {
+    desc: "04. Ut enim ad minim veniam, quis nostrud exercitation.",
+    title: "test 1",
+  },
+  {
+    desc: "05. Llamco nisi ut aliquip ex ea commodo consequat.",
+    title: "test 1",
+  },
+  {
+    desc: "06. Misi ut aliquip ex ea commodo consequat.",
+    title: "test 1",
+  },
+  {
+    desc: "07. Misi ut aliquip ex ea commodo consequat.",
+    title: "test 1",
+  },
+  {
+    title: "test 1",
+    desc: "08. Misi ut aliquip ex ea commodo consequat.",
+  },
+  {
+    title: "test 1",
+    desc: "09. Misi ut aliquip ex ea commodo consequat.",
+  },
+];
+
+const App = () => {
+  const [carouselItems, setCarouselItems] = useState(items);
+  const [currentIndex, setCurrentIndex] = useState(0); // Track current carousel item index
+
+  // Update carousel items and animate based on direction
+  const handleMove = (direction) => {
+    const newIndex = (currentIndex + (direction === "next" ? 1 : -1) + items.length) % items.length;
+    setCarouselItems([...items.slice(newIndex), ...items.slice(0, newIndex)]);
+    setCurrentIndex(newIndex); // Update current index state
+  };
+
+  return (
+    <>
+      <button onClick={() => handleMove("prev")} className="prev">
+        <span className="material-icons">chevron_left</span>
+      </button>
+      <button onClick={() => handleMove("next")} className="next">
+        <span className="material-icons">chevron_right</span>
+      </button>
+      <div className="carousel">
+        {carouselItems.map((item, index) => (
+          <div className="card" key={index}>
+            <p>{item.title}</p>
+            <p>{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+};
+
+export default App;
+
+_______________________
+
+
+/* Global variables */
+:root {
+  --lp-caro-up: 7;                                     /* Number of carousel items per row */
+  --lp-caro-card-margin: 12px;                         /* Spacing between cards */
+  --lp-caro-card-shadow: rgba(46, 49, 52, 0.4);        /* Optional card shadow */
+  --lp-caro-color-white: #fff;                           /* White color */
+  --lp-caro-color-lightgrey: #ccc;                      /* Light gray color */
+  --lp-caro-color-ui: #999;                             /* UI color */
+  --lp-caro-color-ui-hover: #666;                        /* UI hover color */
+  --lp-caro-cardWidth: calc(96vw / var(--lp-caro-up));          /* Calculated card width based on number of items per row */
+  --lp-caro-carouselWidth: calc(var(--lp-caro-cardWidth) * ${items.length}); /* Pre-calculated carousel width based on total items */
+  --lp-caro-carouselLeftMargin: calc(2vw - var(--lp-caro-cardWidth)); /* Adjusted left margin for carousel */
+}
+
+/* Carousel container */
+.carousel {
+  width: var(--lp-caro-carouselWidth);
+  margin: 0 0 0 var(--lp-caro-carouselLeftMargin);
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap onto multiple lines */
+  list-style: none; /* Remove default list styling */
+  padding: 0;
+}
+
+/* Individual cards */
+.card {
+  padding: 50px; /* Adjust padding as needed */
+  text-align: center;
+  width: calc(var(--lp-caro-cardWidth) - var(--lp-caro-card-margin) * 2);
+  box-sizing: border-box; /* Ensure padding is included in width calculations */
+  background: var(--lp-caro-color-white); /* Set background color */
+  box-shadow: var(--lp-caro-card-shadow); /* Optional card shadow */
+  border-radius: 5px; /* Add subtle border radius for visual appeal */
+  margin: var(--lp-caro-card-margin); /* Add spacing between cards */
+}
+
+/* Optional UI elements (e.g., navigation buttons) */
+.ui {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  width: calc(100% - var(--lp-caro-card-margin) * 2);
+  justify-content: space-between;
+  padding: var(--lp-caro-card-margin);
+  z-index: 100; /* Ensure UI elements are displayed on top of carousel items */
+}
+
+/* Animation keyframes (replace with your desired animations) */
+@keyframes next {
+  from {
+    transform: translateX(calc(-100% * var(--lp-caro-cardWidth))); /* Offset for smooth transition */
+  }
+  to {
+    transform: translateX(0px);
+  }
+}
+
+@keyframes prev {
+  from {
+    transform: translateX(0px);
+  }
+  to {
+    transform: translateX(calc(100% * var(--lp-caro-cardWidth))); /* Offset for smooth transition */
+  }
+}
+
