@@ -1,3 +1,163 @@
+___________________________________________________________________________________________________________________________________________________________ Rev 2
+
+import React, { useState, useEffect } from "react";
+import "./App.css";
+const items = [
+  {
+    desc: "01. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    title: "test 1",
+  },
+  {
+    desc: "02. Sed do eiusmod tempor incididunt ut labore.",
+    title: "test 2",
+  },
+  {
+    desc: "03. Consectetur adipiscing elit.",
+    title: "test 3",
+  },
+  {
+    desc: "04. Ut enim ad minim veniam, quis nostrud exercitation.",
+    title: "test 4",
+  },
+  {
+    desc: "05. Llamco nisi ut aliquip ex ea commodo consequat.",
+    title: "test 5",
+  },
+  {
+    desc: "06. Misi ut aliquip ex ea commodo consequat.",
+    title: "test 6",
+  },
+  {
+    desc: "07. Misi ut aliquip ex ea commodo consequat.",
+    title: "test 7",
+  },
+  {
+    title: "test 8",
+    desc: "08. Misi ut aliquip ex ea commodo consequat.",
+  },
+  {
+    title: "test 9",
+    desc: "09. Misi ut aliquip ex ea commodo consequat.",
+  },
+];
+
+const App = () => {
+  const [moveClass, setMoveClass] = useState("");
+  const [carouselItems, setCarouselItems] = useState(items);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty("--num", carouselItems.length);
+  }, [carouselItems]);
+
+  const handleAnimationEnd = () => {
+    if (moveClass === "prev") {
+      shiftNext([...carouselItems]);
+    } else if (moveClass === "next") {
+      shiftPrev([...carouselItems]);
+    }
+    setMoveClass("");
+  };
+
+  const shiftPrev = (desc) => {
+    let lastcard = desc.pop();
+    desc.splice(0, 0, lastcard);
+    setCarouselItems(desc);
+  };
+
+  const shiftNext = (desc) => {
+    let firstcard = desc.shift();
+    desc.splice(desc.length, 0, firstcard);
+    setCarouselItems(desc);
+  };
+
+  return (
+    <>
+        <button onClick={() => setMoveClass("next")} className="prev">
+          <span className="material-icons">chevron_left</span>
+        </button>
+        <button onClick={() => setMoveClass("prev")} className="next">
+          <span className="material-icons">chevron_right</span>
+        </button>
+      <div onAnimationEnd={handleAnimationEnd}
+        className={`${moveClass} carousel`}
+      >
+        {carouselItems.map((t, index) => (
+          <div className="card">
+            <p>{t.title}</p>
+            <p>{t.desc}</p>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+};
+
+export default App;
+______________________________________///CSS
+
+
+:root {
+  --up: 7;
+  --card-margin: 12px;
+  --cardWidth: calc(96vw / var(--up));
+  --carouselWidth: calc(var(--cardWidth) * var(--num));
+  --carouselLeftMargin: calc(2vw - var(--cardWidth));
+
+}
+
+.carousel {
+  width: var(--carouselWidth);
+  margin: 0 0 0 var(--carouselLeftMargin);
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+
+  &.prev {
+    animation-timing-function: cubic-bezier(0.83, 0, 0.17, 1);
+    animation-name: prev;
+  }
+
+  &.next {
+    animation-timing-function: cubic-bezier(0.83, 0, 0.17, 1);
+    animation-name: next;
+  }
+
+  .card {
+    text-align: center;
+    width: calc(var(--cardWidth) - var(--card-margin) * 2);
+  }
+}
+
+
+
+.card {
+  margin: var(--card-margin);
+  background: var(--color-white);
+
+}
+
+@keyframes next {
+  from {
+    transform: translateX(0px);
+  }
+  to {
+    transform: translateX(calc(0px + var(--cardWidth)));
+  }
+}
+
+@keyframes prev {
+  from {
+    transform: translateX(0px);
+  }
+  to {
+    transform: translateX(calc(0px - var(--cardWidth)));
+  }
+}
+
+
+
+___________________________________________________________________________________________________________________________________________________________ Rev 1
 import React, { useState, useEffect } from "react";
 import "./App.css";
 
