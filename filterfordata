@@ -1,0 +1,100 @@
+import { useRecoilState } from "recoil";
+import { filterStateAtom } from "./filterAtom";
+import { useState, useEffect } from "react";
+
+const data = [
+  { name: "testmaster1", isMasterData: true, isReferenceData: true, assetType: "dataset" },
+  { name: "testmaster2", isMasterData: true, isReferenceData: false, assetType: "dataset" },
+  { name: "testmaster3", isMasterData: false, isReferenceData: true, assetType: "dataset" },
+  { name: "testmaster4", isMasterData: true, isReferenceData: true, assetType: "dataset" },
+  { name: "testmaster5", isMasterData: false, isReferenceData: false, assetType: "dataset" },
+];
+
+const FilterComponent = ({ pageName }) => {
+  const [filterState, setFilterState] = useRecoilState(filterStateAtom);
+  const [multiSelect, setMultiSelect] = useState(false);
+  const selectedFilters = filterState[pageName] || [];
+  const [filteredData, setFilteredData] = useState(data);
+
+  useEffect(() => {
+    let filtered = data.filter((item) => {
+      if (selectedFilters.includes("regular")) return item.assetType === "dataset";
+      if (selectedFilters.includes("masterData")) return item.assetType === "dataset" && item.isMasterData;
+      if (selectedFilters.includes("referenceData")) return item.assetType === "dataset" && item.isReferenceData;
+      return false;
+    });
+
+    if (selectedFilters.length === 0) {
+      filtered = data;
+    }
+
+    setFilteredData(filtered);
+  }, [selectedFilters]);
+
+  const handleCheckboxChange = (value) => {
+    setFilterState((prevState) => {
+      const prevFilters = prevState[pageName] || [];
+
+      let newFilters;
+      if (multiSelect) {
+        newFilters = prevFilters.includes(value)
+          ? prevFilters.filter((filter) => filter !== value)
+          : [...prevFilters, value];
+      } else {
+        newFilters = prevFilters.includes(value) ? [] : [value];
+      }
+
+      return { ...prevState, [pageName]: newFilters };
+    });
+  };
+
+  const filters = [
+    { label: "Regular", value: "regular" },
+    { label: "Master Data", value: "masterData" },
+    { label: "Reference Data", value: "referenceData" },
+  ];
+
+  return (
+    <div>
+      <h2>Filters for {pageName}</h2>
+
+      {/* Toggle Multi-Select Button */}
+      <button onClick={() => setMultiSelect(!multiSelect)}>
+        {multiSelect ? "Disable Multi-Select" : "Enable Multi-Select"}
+      </button>
+
+      <div>
+        {filters.map((filter) => (
+          <label key={filter.value} style={{ display: "block", marginTop: "10px" }}>
+            <input
+              type="checkbox"
+              checked={selectedFilters.includes(filter.value)}
+              onChange={() => handleCheckboxChange(filter.value)}
+              disabled={!multiSelect && selectedFilters.length > 0 && !selectedFilters.includes(filter.value)}
+            />
+            {filter.label}
+          </label>
+        ))}
+      </div>
+
+      {/* Display Filtered Data */}
+      <h3>Filtered Results:</h3>
+      <ul>
+        {filteredData.map((item) => (
+          <li key={item.name}>
+            {item.name} - Master: {item.isMasterData ? "Yes" : "No"}, Reference: {item.isReferenceData ? "Yes" : "No"}, Asset Type: {item.assetType}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default FilterComponent;
+
+____
+
+export const filterStateAtom = atom({
+  key: "filterState",
+  default: {}, // Each page will have its own filter state
+});
