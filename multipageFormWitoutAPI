@@ -1,0 +1,79 @@
+import React, { useState } from "react";
+
+const MultiStepForm = () => {
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    name: "",
+    owner: "",
+    description: "",
+    businessPurpose: "",
+    diagram: null,
+    modelCategory: "",
+    modelType: "",
+    automationLevel: "",
+    frequency: "",
+    instance: "",
+    tools: "",
+    evaluationData: "",
+    additionalInfo: "",
+    governanceQuestions: {}
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleNext = () => {
+    if (validateStep()) setStep(step + 1);
+  };
+
+  const handlePrev = () => {
+    setStep(step - 1);
+  };
+
+  const handleClear = () => {
+    setFormData({});
+    setStep(1);
+  };
+
+  const validateStep = () => {
+    const requiredFields = step === 1 ? ["name", "owner", "description", "businessPurpose"] : step === 2 ? ["modelCategory", "modelType"] : [];
+    return requiredFields.every((field) => formData[field]);
+  };
+
+  return (
+    <div className="container mx-auto p-6">
+      {step === 1 && (
+        <div>
+          <h2 className="text-xl font-bold">Model Details</h2>
+          <input name="name" placeholder="Name" value={formData.name} onChange={handleChange} required className="border p-2 w-full" />
+          <input name="owner" placeholder="Owner" value={formData.owner} onChange={handleChange} required className="border p-2 w-full" />
+          <textarea name="description" placeholder="Description" value={formData.description} onChange={handleChange} required className="border p-2 w-full" />
+          <textarea name="businessPurpose" placeholder="Business Purpose" value={formData.businessPurpose} onChange={handleChange} required className="border p-2 w-full" />
+          <button onClick={handleNext} className="bg-blue-500 text-white px-4 py-2">Next</button>
+        </div>
+      )}
+      
+      {step === 2 && (
+        <div>
+          <h2 className="text-xl font-bold">Additional Details</h2>
+          <input name="modelCategory" placeholder="Model Category" value={formData.modelCategory} onChange={handleChange} required className="border p-2 w-full" />
+          <input name="modelType" placeholder="Model Type" value={formData.modelType} onChange={handleChange} required className="border p-2 w-full" />
+          <button onClick={handlePrev} className="bg-gray-500 text-white px-4 py-2">Go Back</button>
+          <button onClick={handleNext} className="bg-blue-500 text-white px-4 py-2 ml-2">Next</button>
+        </div>
+      )}
+      
+      {step === 3 && (
+        <div>
+          <h2 className="text-xl font-bold">Preview</h2>
+          <pre className="bg-gray-100 p-4">{JSON.stringify(formData, null, 2)}</pre>
+          <button onClick={handlePrev} className="bg-gray-500 text-white px-4 py-2">Go Back</button>
+          <button onClick={handleClear} className="bg-red-500 text-white px-4 py-2 ml-2">Clear Selection</button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default MultiStepForm;
