@@ -1,0 +1,96 @@
+import React, { useState, useEffect } from "react";
+
+const PublishModelForm = () => {
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    name: "",
+    owner: "",
+    description: "",
+    businessPurpose: "",
+    diagram: null,
+    modelCategory: "",
+    modelType: "",
+    levelsOfAutomation: "",
+    frequency: "",
+    instance: "",
+    relevantTeam: "",
+    featureDescription: "",
+    evaluationDataSet: "",
+    additionalAttachments: "",
+    dataDomain: "",
+    subDomain: "",
+    sourceSystem: "",
+    methodologies: "",
+    lossMetric: "",
+    modelRetrainCycle: "",
+    governanceQuestions: {},
+  });
+
+  useEffect(() => {
+    // Fetch API data if in edit mode
+    const fetchData = async () => {
+      const response = await fetch("/api/getModelData");
+      const data = await response.json();
+      setFormData(data);
+    };
+    fetchData();
+  }, []);
+
+  const handleNext = async () => {
+    if (validateFields()) {
+      await saveData();
+      setStep(step + 1);
+    }
+  };
+
+  const handleBack = () => setStep(step - 1);
+
+  const handleClear = () => setFormData({});
+
+  const saveData = async () => {
+    await fetch("/api/saveModelData", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+  };
+
+  const validateFields = () => {
+    // Implement validation logic to check required fields
+    return true;
+  };
+
+  return (
+    <div>
+      {step === 1 && (
+        <div>
+          <h2>Machine Learning Model Details</h2>
+          <input value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
+          <input value={formData.owner} onChange={(e) => setFormData({ ...formData, owner: e.target.value })} />
+          <button onClick={handleNext}>Next</button>
+        </div>
+      )}
+      {step === 2 && (
+        <div>
+          <h2>Additional Details</h2>
+          <select value={formData.modelCategory} onChange={(e) => setFormData({ ...formData, modelCategory: e.target.value })}>
+            <option>Choose Category</option>
+          </select>
+          <button onClick={handleBack}>Go Back</button>
+          <button onClick={handleNext}>Next</button>
+        </div>
+      )}
+      {step === 3 && (
+        <div>
+          <h2>Preview</h2>
+          <pre>{JSON.stringify(formData, null, 2)}</pre>
+          <button onClick={handleBack}>Go Back</button>
+          <button onClick={saveData}>Submit</button>
+        </div>
+      )}
+      <button onClick={handleClear}>Clear Selection</button>
+    </div>
+  );
+};
+
+export default PublishModelForm;
